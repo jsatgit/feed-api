@@ -25,12 +25,17 @@ class DB:
         )
 
     def subscribe(self, user, feed):
-        self.cursor.execute(
-            '''
-            INSERT INTO subscriber (user, feed)
-            VALUES (?, ?)
-            ''', (user, feed)
-        )
+        try:
+            self.cursor.execute(
+                '''
+                INSERT INTO subscriber (user, feed)
+                VALUES (?, ?)
+                ''', (user, feed)
+            )
+        except sqlite3.IntegrityError:
+            return False
+
+        return True
 
     def unsubscribe(self, user, feed):
         self.cursor.execute(
@@ -41,12 +46,17 @@ class DB:
         )
 
     def add_article_to_feed(self, article, feed):
-        self.cursor.execute(
-            '''
-            INSERT INTO subscription (feed, article)
-            VALUES (?, ?)
-            ''' , (feed, article)
-        )
+        try:
+            self.cursor.execute(
+                '''
+                INSERT INTO subscription (feed, article)
+                VALUES (?, ?)
+                ''' , (feed, article)
+            )
+        except sqlite3.IntegrityError:
+            return False
+
+        return True
 
     def get_feeds_by_subscriber(self, user):
         self.cursor.execute(

@@ -64,22 +64,12 @@ def test_unsubscribe():
 def test_dup_subscribe():
     alice_feeds, bob_feeds, charlie_feeds = get_feeds()
     subscribe_user_to_feeds('Alice', alice_feeds)
-    try:
-        subscribe_user_to_feeds('Alice', alice_feeds)
-    except sqlite3.IntegrityError:
-        pass
-    else:
-        raise Exception('no duplicates detected')
+    assert db.subscribe('Alice', alice_feeds[0]) == False
 
 def test_dup_articles_in_feed():
     cooking_articles, engineering_articles, sports_articles = get_articles()
     add_articles_to_feed('Cooking', cooking_articles)
-    try:
-        add_articles_to_feed('Cooking', cooking_articles)
-    except sqlite3.IntegrityError:
-        pass
-    else:
-        raise Exception('no duplicates detected')
+    assert db.add_article_to_feed(cooking_articles[0], 'Cooking') == False
 
 test_subscribe()
 test_add_articles_to_feeds()
