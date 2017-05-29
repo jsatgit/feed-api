@@ -118,4 +118,4 @@ at once. Providing the ability to allow for bulk submission will lead to less ne
 
 A proper web server such as Nginx has not been set up since this service is not being productionized at the moment.
 
-A client/server database such as MySQL would be more appropriate if we wanted to scale to more concurrent users.
+A client/server database such as MySQL would be more appropriate when scaling to large numbers of concurrent users.
