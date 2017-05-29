@@ -84,3 +84,7 @@ class DB:
         )
         self.connection.commit()
         return [article for article, in self.cursor.fetchall()]
+
+    def close(self):
+        self.cursor.close()
+        self.connection.close()
