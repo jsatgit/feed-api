@@ -32,10 +32,11 @@ pip install -r requirements.txt
 
 ### Starting service
 
-1. While virtualenv is activated run:
+While virtualenv is activated run:
 ```
 make start
 ```
+
 This will start the service on `localhost:5000`
 
 ### Example queries
@@ -57,11 +58,9 @@ curl "http://localhost:5000/feeds?user=James"
 
 ## Tests
 
-Automated tests can be run while the service is up.
-Currently, the tests will not automatically start the service.
-
-1. Run tests by:
+Start the service then run the tests:
 ```
+make start
 make test
 ```
 
@@ -82,11 +81,11 @@ There are two components of this service. A web application component and a data
 ### Major Dependencies 
 
 1. [Flask](http://flask.pocoo.org/) - Flask is used as the web application framework. It is responsible for handling concurrent HTTP requests
-with custom Python code. Flask was chosen because it has a clean interface and it allows us to choose our own database tools.
+with custom Python code. Flask was chosen because it has a clean interface and it gives the developer freedom to choose custom database tools.
 
 3. [SQLite](https://www.sqlite.org/) - SQLite is used as a database to support data persistence. A relational database was chosen because the relationship
 between users, feeds, articles can be easily expressed and queried using this model. SQLite was used instead of MySQL or Postgres since 
-it is lightweight and the higher concurrency aspects of client/server databases are of lower priority. 
+it is lightweight and the higher concurrency aspects of client/server databases are of lower priority at the moment. 
 
 ### Database Schema
 
@@ -109,12 +108,12 @@ Currently, only relationships are represented as tables in the database. This is
 In a more realistic scenario, an article will contain more fields than just a name. 
 For example, it will also contain fields for its author and content. 
 To support this extension a new table can be created for an article.
-In addition, this requires opening up another API endpoint for create articles. 
-On the database end a primary key can be added to the article table. Then, articles in 
+In addition, this requires opening up another API endpoint for creating articles. 
+On the database end, a primary key can be added to the article table so that articles in 
 relationship tables can refer to articles by their primary keys. A similar extension applies 
 to other entities such as feeds and users.
 
-The current api does not allow for bulk operations. Users sometimes may want to subscribe to more than one feed
+The current API does not allow for bulk operations. Users sometimes may want to subscribe to more than one feed
 at once. Providing the ability to allow for bulk submission will lead to less network requests.
 
 A proper web server such as Nginx has not been set up since this service is not being productionized at the moment.
