@@ -1,11 +1,10 @@
+import logging
+import sys
+
 from flask import Flask
 from flask import jsonify
 from flask import request
-
 from requests import codes
-
-import logging
-import sys
 
 from db import DB
 
