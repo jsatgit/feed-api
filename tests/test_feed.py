@@ -1,7 +1,8 @@
 import unittest
 import json
-import requests
+from multiprocessing import Process
 
+import requests
 from requests import codes
 
 import mock_data
@@ -27,6 +28,31 @@ def publish(request_data):
 def bulk_publish(request_data):
     for request in request_data:
         publish(request)
+
+def get_feeds(request_data):
+    response = requests.get(
+        base_url + '/feeds',
+        params=request_data
+    )
+    return json.loads(response.text)
+
+def subscribe_n_feeds(user, nfeeds):
+    for i in xrange(nfeeds):
+        subscribe({
+            'user': user,
+            'feed': 'feed{}'.format(i)
+        })
+
+def parallel_subscribe(users, nfeeds):
+    processes = []
+    for user in users:
+        process = Process(target=subscribe_n_feeds, args=(user, nfeeds))
+        process.start()
+        processes.append(process)
+
+    for process in processes: 
+        process.join()
+
 
 class TestFeed(unittest.TestCase):
     def setUp(self):
@@ -90,6 +116,16 @@ class TestFeed(unittest.TestCase):
             json.loads(response.text),
             [feed_article['article'] for feed_article in feed_articles]
         )
+
+    def test_parallel_subscribe(self):
+        users = ['Alice', 'Bob', 'Charlie']
+        nfeeds = 100
+        parallel_subscribe(users, nfeeds)
+        
+        actual_feeds = { user: get_feeds({ 'user': user }) for user in users }
+        expected_feeds = ['feed{}'.format(i) for i in range(nfeeds)]
+        for user in users:
+            self.assertItemsEqual(actual_feeds[user], expected_feeds)
 
 if __name__ == '__main__':
     unittest.main()
