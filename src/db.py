@@ -10,15 +10,15 @@ class DB:
             '''
             DROP TABLE IF EXISTS subscriber;
             CREATE TABLE subscriber (
-                user varchar(50) not null,
-                feed varchar(50) not null,
+                user char(50) not null,
+                feed char(50) not null,
                 UNIQUE (user, feed)
             );
 
             DROP TABLE IF EXISTS subscription;
             CREATE TABLE subscription (
-                feed varchar(50) not null,
-                article varchar(50) not null,
+                feed char(50) not null,
+                article char(50) not null,
                 UNIQUE (feed, article)
             );
             '''
