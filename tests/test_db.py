@@ -32,17 +32,6 @@ class TestDB(unittest.TestCase):
         self.assertItemsEqual(self.db.get_feeds_by_subscriber('Bob'), bob_feeds)
         self.assertItemsEqual(self.db.get_feeds_by_subscriber('Charlie'), charlie_feeds)
 
-    def test_add_articles_to_feeds(self):
-        alice_feeds, bob_feeds, charlie_feeds = get_mock_feeds()
-        self.subscribe_user_to_feeds('Alice', alice_feeds)
-
-        cooking_articles, engineering_articles, sports_articles = get_mock_articles()
-        self.add_articles_to_feed('Cooking', cooking_articles)
-        self.add_articles_to_feed('Engineering', engineering_articles)
-        self.add_articles_to_feed('Sports', sports_articles)
-
-        self.assertItemsEqual(self.db.get_articles_by_subscriber('Alice'), engineering_articles + sports_articles)
-
     def test_unsubscribe(self):
         alice_feeds, bob_feeds, charlie_feeds = get_mock_feeds()
         self.subscribe_user_to_feeds('Alice', alice_feeds)
@@ -57,15 +46,34 @@ class TestDB(unittest.TestCase):
         self.assertItemsEqual(self.db.get_feeds_by_subscriber('Alice'), alice_feeds)
         self.assertItemsEqual(self.db.get_feeds_by_subscriber('Bob'), bob_feeds)
 
+    def test_add_articles_to_feeds(self):
+        alice_feeds, bob_feeds, charlie_feeds = get_mock_feeds()
+        self.subscribe_user_to_feeds('Alice', alice_feeds)
+
+        cooking_articles, engineering_articles, sports_articles = get_mock_articles()
+        self.add_articles_to_feed('Cooking', cooking_articles)
+        self.add_articles_to_feed('Engineering', engineering_articles)
+        self.add_articles_to_feed('Sports', sports_articles)
+
+        self.assertItemsEqual(self.db.get_articles_by_subscriber('Alice'), engineering_articles + sports_articles)
+
     def test_dup_subscribe(self):
         alice_feeds, bob_feeds, charlie_feeds = get_mock_feeds()
         self.subscribe_user_to_feeds('Alice', alice_feeds)
-        assert self.db.subscribe('Alice', alice_feeds[0]) == False
+        self.assertFalse(self.db.subscribe('Alice', alice_feeds[0]))
 
     def test_dup_articles_in_feed(self):
         cooking_articles, engineering_articles, sports_articles = get_mock_articles()
         self.add_articles_to_feed('Cooking', cooking_articles)
-        assert self.db.add_article_to_feed(cooking_articles[0], 'Cooking') == False
+        self.assertFalse(self.db.add_article_to_feed(cooking_articles[0], 'Cooking'))
+
+    def test_persist(self):
+        alice_feeds, bob_feeds, charlie_feeds = get_mock_feeds()
+        self.subscribe_user_to_feeds('Alice', alice_feeds)
+        self.db.close()
+        TestDB.db = DB()
+        self.assertItemsEqual(self.db.get_feeds_by_subscriber('Alice'), alice_feeds)
+
 
 if __name__ == '__main__':
     unittest.main()
